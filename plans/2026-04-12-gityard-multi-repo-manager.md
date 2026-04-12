@@ -102,13 +102,13 @@ registry: `add`, `scan`, `list`, `remove` subcommands that persist to
 
 **File**: `Cargo.toml`
 
-- [ ] Create with `edition = "2024"`, package metadata (`name`, `version = "0.1.0"`,
+- [x] Create with `edition = "2024"`, package metadata (`name`, `version = "0.1.0"`,
       `description`, `license = "MIT"`)
-- [ ] Add dependencies: `anyhow = "1"`, `clap = { version = "4", features = ["derive"] }`,
+- [x] Add dependencies: `anyhow = "1"`, `clap = { version = "4", features = ["derive"] }`,
       `dirs = "6"`, `serde = { version = "1", features = ["derive"] }`,
       `thiserror = "2"`, `toml = "0.8"`, `walkdir = "2"`
-- [ ] Add dev-dependencies: `tempfile = "3"`, `assert_cmd = "2"`, `predicates = "3"`
-- [ ] Add clippy lint configuration matching agentspec: deny `complexity`,
+- [x] Add dev-dependencies: `tempfile = "3"`, `assert_cmd = "2"`, `predicates = "3"`
+- [x] Add clippy lint configuration matching agentspec: deny `complexity`,
       `pedantic`, `perf`, `style`, `suspicious` at `priority = -1`; deny
       `expect_used`, `panic`, `unwrap_used`, `wildcard_enum_match_arm`; allow
       `implicit_hasher`, `missing_errors_doc`, `must_use_candidate`,
@@ -135,35 +135,35 @@ module_name_repetitions = "allow"  # gityard-specific: e.g. `registry::RepoEntry
 
 **File**: `clippy.toml`
 
-- [ ] Create with test ergonomics: `allow-expect-in-tests = true`,
+- [x] Create with test ergonomics: `allow-expect-in-tests = true`,
       `allow-panic-in-tests = true`
 
 **File**: `rustfmt.toml`
 
-- [ ] Create matching agentspec: `imports_granularity = "Module"`,
+- [x] Create matching agentspec: `imports_granularity = "Module"`,
       `group_imports = "StdExternalCrate"`
 
 **File**: `deny.toml`
 
-- [ ] Create with license allowlist starting from agentspec's list (Apache-2.0,
+- [x] Create with license allowlist starting from agentspec's list (Apache-2.0,
       BSD-2-Clause, BSD-3-Clause, ISC, MIT, MIT-0, MPL-2.0, Unicode-3.0,
       Unicode-DFS-2016, Zlib)
-- [ ] After adding `git2` in Phase 2, run `cargo deny check licenses` to
+- [x] After adding `git2` in Phase 2, run `cargo deny check licenses` to
       identify any additional licenses required by `git2`/`libgit2-sys` and
       their transitive dependencies — add only what actually fails
 
 **File**: `.github/workflows/ci.yml`
 
-- [ ] Create CI workflow: fmt check, clippy, test, cargo-deny license check
-- [ ] Pin all action SHAs matching agentspec pattern (with human-readable tag comments)
+- [x] Create CI workflow: fmt check, clippy, test, cargo-deny license check
+- [x] Pin all action SHAs matching agentspec pattern (with human-readable tag comments)
 
 **File**: `.gitignore`
 
-- [ ] Create with `/target` entry
+- [x] Create with `/target` entry
 
 **File**: `CLAUDE.md`
 
-- [ ] Create project-level instructions: build commands, commit conventions
+- [x] Create project-level instructions: build commands, commit conventions
       (conventional commits), clippy rules, module layout convention, design
       principles carried from agentspec
 
@@ -171,8 +171,8 @@ module_name_repetitions = "allow"  # gityard-specific: e.g. `registry::RepoEntry
 
 **File**: `src/cli.rs`
 
-- [ ] Define `Cli` struct with `#[derive(Parser)]` and `#[command(subcommand)]`
-- [ ] Define `Command` enum with initial subcommands:
+- [x] Define `Cli` struct with `#[derive(Parser)]` and `#[command(subcommand)]`
+- [x] Define `Command` enum with initial subcommands:
   - `Add { paths: Vec<PathBuf> }` — register repos
   - `Scan { dir: PathBuf, #[arg(long, default_value_t = 3)] depth: usize }` — discover repos
   - `List` — show registered repos
@@ -218,15 +218,15 @@ pub enum Command {
 
 **File**: `src/config.rs`
 
-- [ ] Define `Config` struct (deserialized from `config.toml`):
+- [x] Define `Config` struct (deserialized from `config.toml`):
   - `status: StatusConfig` (default columns, color preferences)
   - `scan: ScanConfig` (default depth)
   - `defaults: DefaultsConfig` (main branch names: `["main", "master"]`)
-- [ ] Implement `Config::load()` that reads from `config_dir()/config.toml`,
+- [x] Implement `Config::load()` that reads from `config_dir()/config.toml`,
       falling back to defaults if file doesn't exist
-- [ ] Use `dirs::config_dir()` with `gityard` subdirectory; support
+- [x] Use `dirs::config_dir()` with `gityard` subdirectory; support
       `GITYARD_CONFIG_DIR` env var override
-- [ ] Add `#[serde(default, deny_unknown_fields)]` on all config structs
+- [x] Add `#[serde(default, deny_unknown_fields)]` on all config structs
 
 ```rust
 /// Resolves the gityard configuration directory.
@@ -244,21 +244,21 @@ pub fn config_dir() -> Result<PathBuf> {
 
 **File**: `src/registry.rs`
 
-- [ ] Define `RepoEntry` struct: `path: PathBuf`, `alias: Option<String>`,
+- [x] Define `RepoEntry` struct: `path: PathBuf`, `alias: Option<String>`,
       `groups: Vec<String>`
-- [ ] Define `Registry` struct wrapping `Vec<RepoEntry>` with TOML
+- [x] Define `Registry` struct wrapping `Vec<RepoEntry>` with TOML
       serialization to `repos.toml`
-- [ ] Implement `Registry::load(config_dir)` — reads from `repos.toml`, returns
+- [x] Implement `Registry::load(config_dir)` — reads from `repos.toml`, returns
       empty registry if file doesn't exist
-- [ ] Implement `Registry::save(config_dir)` — writes to `repos.toml`, creating
+- [x] Implement `Registry::save(config_dir)` — writes to `repos.toml`, creating
       the config directory if needed
-- [ ] Implement `Registry::add(path)` — canonicalizes path, validates it's a git
+- [x] Implement `Registry::add(path)` — canonicalizes path, validates it's a git
       repo (check for `.git` directory in Phase 1; upgrade to
       `git2::Repository::open` validation in Phase 2 when `git2` is added),
       auto-generates alias from directory name, deduplicates by canonical path
-- [ ] Implement `Registry::remove(identifier)` — remove by path or alias
-- [ ] Implement `Registry::list()` — returns slice of entries
-- [ ] Add `#[serde(deny_unknown_fields)]` on `RepoEntry`
+- [x] Implement `Registry::remove(identifier)` — remove by path or alias
+- [x] Implement `Registry::list()` — returns slice of entries
+- [x] Add `#[serde(deny_unknown_fields)]` on `RepoEntry`
 
 ```toml
 # ~/.config/gityard/repos.toml
@@ -277,72 +277,72 @@ groups = []
 
 **File**: `src/scanner.rs`
 
-- [ ] Implement `scan(dir, max_depth) -> Vec<PathBuf>` that walks a directory
+- [x] Implement `scan(dir, max_depth) -> Vec<PathBuf>` that walks a directory
       tree using `walkdir` and returns paths containing `.git` directories
-- [ ] Skip directories that are themselves inside `.git`
-- [ ] Return canonical paths for consistent deduplication with registry
+- [x] Skip directories that are themselves inside `.git`
+- [x] Return canonical paths for consistent deduplication with registry
 
 #### 5. Binary Entry Point
 
 **File**: `src/main.rs`
 
-- [ ] Parse CLI with `Cli::parse()`
-- [ ] Load config and registry
-- [ ] Dispatch to command handlers: `add`, `scan`, `list`, `remove`
-- [ ] `add`: validate paths are git repos, add to registry, save, print confirmation
-- [ ] `scan`: run scanner, show discovered repos, add all to registry, save
-- [ ] `list`: print registered repos (path + alias)
-- [ ] `remove`: remove from registry, save, print confirmation
-- [ ] Return `anyhow::Result<()>` from `main()`
+- [x] Parse CLI with `Cli::parse()`
+- [x] Load config and registry
+- [x] Dispatch to command handlers: `add`, `scan`, `list`, `remove`
+- [x] `add`: validate paths are git repos, add to registry, save, print confirmation
+- [x] `scan`: run scanner, show discovered repos, add all to registry, save
+- [x] `list`: print registered repos (path + alias)
+- [x] `remove`: remove from registry, save, print confirmation
+- [x] Return `anyhow::Result<()>` from `main()`
 
 **File**: `src/lib.rs`
 
-- [ ] Declare public modules: `config`, `registry`, `scanner`
+- [x] Declare public modules: `config`, `registry`, `scanner`
 
 #### Tests for This Phase
 
 **File**: `src/registry.rs` (unit tests module)
 
-- [ ] Test `Registry::add` deduplicates by canonical path
-- [ ] Test `Registry::add` rejects non-git directories
-- [ ] Test `Registry::remove` by path and by alias
-- [ ] Test `Registry::load` returns empty registry when file doesn't exist
-- [ ] Test round-trip: save then load preserves entries
+- [x] Test `Registry::add` deduplicates by canonical path
+- [x] Test `Registry::add` rejects non-git directories
+- [x] Test `Registry::remove` by path and by alias
+- [x] Test `Registry::load` returns empty registry when file doesn't exist
+- [x] Test round-trip: save then load preserves entries
 
 **File**: `src/scanner.rs` (unit tests module)
 
-- [ ] Test `scan` discovers git repos in nested directories (create temp dirs
+- [x] Test `scan` discovers git repos in nested directories (create temp dirs
       with `git init`)
-- [ ] Test `scan` respects depth limit
-- [ ] Test `scan` skips non-repo directories
+- [x] Test `scan` respects depth limit
+- [x] Test `scan` skips non-repo directories
 
 **File**: `src/config.rs` (unit tests module)
 
-- [ ] Test `Config::load` returns defaults when no config file exists
-- [ ] Test `Config::load` parses valid TOML
-- [ ] Test `Config::load` rejects unknown fields
+- [x] Test `Config::load` returns defaults when no config file exists
+- [x] Test `Config::load` parses valid TOML
+- [x] Test `Config::load` rejects unknown fields
 
 **File**: `tests/cli.rs` (integration tests)
 
-- [ ] Test `gityard add <path>` with a real temp git repo
-- [ ] Test `gityard list` shows registered repos
-- [ ] Test `gityard remove` removes a repo
-- [ ] Test `gityard scan <dir>` discovers repos
-- [ ] Use `assert_cmd` crate to run the binary and check stdout/stderr/exit code
+- [x] Test `gityard add <path>` with a real temp git repo
+- [x] Test `gityard list` shows registered repos
+- [x] Test `gityard remove` removes a repo
+- [x] Test `gityard scan <dir>` discovers repos
+- [x] Use `assert_cmd` crate to run the binary and check stdout/stderr/exit code
 
 ### Success Criteria:
 
 #### Automated Verification:
 
-- [ ] `cargo fmt --check` passes
-- [ ] `cargo clippy --all-targets` passes with no warnings
-- [ ] `cargo test` passes (unit + integration tests)
-- [ ] `cargo deny check licenses` passes
-- [ ] `gityard add <path-to-git-repo>` registers the repo
-- [ ] `gityard scan <dir>` discovers git repos recursively
-- [ ] `gityard list` displays registered repos
-- [ ] `gityard remove <repo>` removes a repo from the registry
-- [ ] Registry persists across invocations (data in `~/.config/gityard/repos.toml`)
+- [x] `cargo fmt --check` passes
+- [x] `cargo clippy --all-targets` passes with no warnings
+- [x] `cargo test` passes (unit + integration tests)
+- [x] `cargo deny check licenses` passes
+- [x] `gityard add <path-to-git-repo>` registers the repo
+- [x] `gityard scan <dir>` discovers git repos recursively
+- [x] `gityard list` displays registered repos
+- [x] `gityard remove <repo>` removes a repo from the registry
+- [x] Registry persists across invocations (data in `~/.config/gityard/repos.toml`)
 
 ---
 
@@ -361,14 +361,14 @@ count. This is the data layer that powers the status view.
 
 **File**: `Cargo.toml`
 
-- [ ] Add `git2 = "0.20"` to dependencies
-- [ ] Add `rayon = "1"` to dependencies
+- [x] Add `git2 = "0.20"` to dependencies
+- [x] Add `rayon = "1"` to dependencies
 
 #### 2. Inspector Module
 
 **File**: `src/inspector.rs`
 
-- [ ] Define `RepoState` struct with all fields needed for the status view:
+- [x] Define `RepoState` struct with all fields needed for the status view:
 
 ```rust
 /// Complete state of a single repository, read via git2.
@@ -400,9 +400,9 @@ pub struct RepoState {
 }
 ```
 
-- [ ] Define `InspectError` enum with `thiserror::Error`:
+- [x] Define `InspectError` enum with `thiserror::Error`:
   - `OpenFailed { path: PathBuf, source: git2::Error }`
-- [ ] Implement `inspect(entry: &RepoEntry, main_branches: &[String]) -> Result<RepoState>`:
+- [x] Implement `inspect(entry: &RepoEntry, main_branches: &[String]) -> Result<RepoState>`:
   1. Open repo with `git2::Repository::open(&entry.path)`
   2. Read current branch from `repo.head()` → `reference.shorthand()`;
      if HEAD is detached, use `repo.head().peel_to_commit()` to produce a
@@ -419,7 +419,7 @@ pub struct RepoState {
      → `branch.upstream()` → get its target OID
   7. Compute ahead/behind remote: `repo.graph_ahead_behind(head_oid, upstream_oid)`
   8. Count stashes: `repo.stash_foreach(|_, _, _| { count += 1; true })`
-- [ ] Implement `inspect_all` using `rayon::par_iter()` for parallel inspection,
+- [x] Implement `inspect_all` using `rayon::par_iter()` for parallel inspection,
       returning `Vec<(RepoEntry, Result<RepoState, InspectError>)>` (each result
       paired with its entry for error reporting)
 
@@ -442,7 +442,7 @@ pub fn inspect_all(
 
 **File**: `src/lib.rs`
 
-- [ ] Add `pub mod inspector;`
+- [x] Add `pub mod inspector;`
 
 #### Tests for This Phase
 
@@ -450,29 +450,29 @@ pub fn inspect_all(
 
 All tests create real git repos in temporary directories using `git2::Repository::init`:
 
-- [ ] Test clean repo: `is_dirty` is false, all counts are 0
-- [ ] Test dirty repo: create a file, verify `untracked_count = 1`, `is_dirty = true`
-- [ ] Test staged changes: `git add` a file, verify `staged_count = 1`
-- [ ] Test modified file: modify a tracked file, verify `modified_count = 1`
-- [ ] Test branch detection: create and checkout a branch, verify `branch` field
-- [ ] Test ahead/behind main: create commits on a branch, verify `ahead_main` count
-- [ ] Test stash count: create a stash entry, verify `stash_count = 1`
-- [ ] Test missing main branch: repo with no `main` or `master`, verify
+- [x] Test clean repo: `is_dirty` is false, all counts are 0
+- [x] Test dirty repo: create a file, verify `untracked_count = 1`, `is_dirty = true`
+- [x] Test staged changes: `git add` a file, verify `staged_count = 1`
+- [x] Test modified file: modify a tracked file, verify `modified_count = 1`
+- [x] Test branch detection: create and checkout a branch, verify `branch` field
+- [x] Test ahead/behind main: create commits on a branch, verify `ahead_main` count
+- [x] Test stash count: create a stash entry, verify `stash_count = 1`
+- [x] Test missing main branch: repo with no `main` or `master`, verify
       `ahead_main` and `behind_main` are `None`
-- [ ] Test detached HEAD: checkout a commit directly, verify `branch` field
+- [x] Test detached HEAD: checkout a commit directly, verify `branch` field
       contains a description like `"HEAD detached at abc1234"` and ahead/behind
       main is still computed
-- [ ] Test upstream tracking: set up a local remote + tracking branch, verify
+- [x] Test upstream tracking: set up a local remote + tracking branch, verify
       `ahead_remote`/`behind_remote`
 
 ### Success Criteria:
 
 #### Automated Verification:
 
-- [ ] `cargo fmt --check` passes
-- [ ] `cargo clippy --all-targets` passes
-- [ ] `cargo test` passes — all inspector unit tests green
-- [ ] `inspect()` correctly reads branch, dirty status, file counts, ahead/behind,
+- [x] `cargo fmt --check` passes
+- [x] `cargo clippy --all-targets` passes
+- [x] `cargo test` passes — all inspector unit tests green
+- [x] `inspect()` correctly reads branch, dirty status, file counts, ahead/behind,
       and stash count from real git repos in temp directories
 
 ---
@@ -491,13 +491,13 @@ footer, and support status-based filtering flags.
 
 **File**: `Cargo.toml`
 
-- [ ] Add `colored = "3"` to dependencies (for terminal colors)
+- [x] Add `colored = "3"` to dependencies (for terminal colors)
 
 #### 2. Filter Module
 
 **File**: `src/filter.rs`
 
-- [ ] Define `StatusFilter` struct with boolean flags:
+- [x] Define `StatusFilter` struct with boolean flags:
 
 ```rust
 pub struct StatusFilter {
@@ -509,7 +509,7 @@ pub struct StatusFilter {
 }
 ```
 
-- [ ] Implement `StatusFilter::matches(&self, state: &RepoState) -> bool`
+- [x] Implement `StatusFilter::matches(&self, state: &RepoState) -> bool`
   - If no flags set, match all repos
   - If any flag set, repo must match at least one active flag
   - `dirty`: `state.is_dirty`
@@ -522,7 +522,7 @@ pub struct StatusFilter {
 
 **File**: `src/presenter.rs`
 
-- [ ] Implement `format_status_table(states: &[&RepoState]) -> String` that produces
+- [x] Implement `format_status_table(states: &[&RepoState]) -> String` that produces
       the compact table format from the idea doc:
 
 ```
@@ -535,7 +535,7 @@ pub struct StatusFilter {
  4 repos · 2 dirty · 2 ahead of main
 ```
 
-- [ ] Column formatting:
+- [x] Column formatting:
   - REPO: alias, left-aligned, prefixed with `✓` (green) or `✗` (red)
   - BRANCH: current branch name, left-aligned
   - STATUS: `clean` (green) or `{N}M {N}S {N}?` compact format
@@ -544,19 +544,19 @@ pub struct StatusFilter {
      `?` = untracked from `untracked_count`)
   - ↑↓ MAIN: `+N` (cyan) ahead, `-N` (yellow) behind, `─` if synced/N/A
   - ↑↓ REMOTE: same format as main column
-- [ ] Compute column widths dynamically from data
-- [ ] Render summary footer: total repos, dirty count, ahead-of-main count
-- [ ] Handle inspection errors gracefully: show repo with `error` status in red
+- [x] Compute column widths dynamically from data
+- [x] Render summary footer: total repos, dirty count, ahead-of-main count
+- [x] Handle inspection errors gracefully: show repo with `error` status in red
 
-- [ ] Implement `format_repo_errors(errors: &[(RepoEntry, InspectError)]) -> String`
+- [x] Implement `format_repo_errors(errors: &[(RepoEntry, InspectError)]) -> String`
       for repos that failed inspection (e.g., deleted repo still in registry)
 
 #### 4. Status CLI Arguments
 
 **File**: `src/cli.rs`
 
-- [ ] Add `Status(StatusArgs)` variant to `Command` enum
-- [ ] Define `StatusArgs`:
+- [x] Add `Status(StatusArgs)` variant to `Command` enum
+- [x] Define `StatusArgs`:
 
 ```rust
 #[derive(Debug, Parser)]
@@ -583,7 +583,7 @@ pub struct StatusArgs {
 
 **File**: `src/main.rs`
 
-- [ ] Add `Command::Status` handler:
+- [x] Add `Command::Status` handler:
   1. Load registry
   2. Run `inspect_all` across all entries (parallel via rayon)
   3. Separate successes from errors
@@ -593,27 +593,27 @@ pub struct StatusArgs {
 
 **File**: `src/lib.rs`
 
-- [ ] Add `pub mod filter;` and `pub mod presenter;`
+- [x] Add `pub mod filter;` and `pub mod presenter;`
 
 #### Tests for This Phase
 
 **File**: `src/filter.rs` (unit tests)
 
-- [ ] Test no flags set matches all repos
-- [ ] Test `--dirty` matches only dirty repos
-- [ ] Test `--clean` matches only clean repos
-- [ ] Test `--ahead` matches repos ahead of main or remote
-- [ ] Test `--behind` matches repos behind
-- [ ] Test `--diverged` matches repos both ahead and behind
-- [ ] Test multiple flags: `--dirty --ahead` matches repos matching either
+- [x] Test no flags set matches all repos
+- [x] Test `--dirty` matches only dirty repos
+- [x] Test `--clean` matches only clean repos
+- [x] Test `--ahead` matches repos ahead of main or remote
+- [x] Test `--behind` matches repos behind
+- [x] Test `--diverged` matches repos both ahead and behind
+- [x] Test multiple flags: `--dirty --ahead` matches repos matching either
 
 **File**: `src/presenter.rs` (unit tests)
 
-- [ ] Test table output formatting with known `RepoState` values
-- [ ] Test column alignment with varying alias/branch lengths
-- [ ] Test summary footer counts
-- [ ] Test error display for failed inspections
-- [ ] Test `clean` status renders as green, dirty as red — presenter functions
+- [x] Test table output formatting with known `RepoState` values
+- [x] Test column alignment with varying alias/branch lengths
+- [x] Test summary footer counts
+- [x] Test error display for failed inspections
+- [x] Test `clean` status renders as green, dirty as red — presenter functions
       should accept a `colors_enabled: bool` parameter (or the presenter struct
       holds this config) so tests pass `false` without relying on the global
       `colored::control::set_override`, which is not thread-safe across parallel
@@ -621,21 +621,21 @@ pub struct StatusArgs {
 
 **File**: `tests/cli.rs` (integration tests — extend)
 
-- [ ] Test `gityard status` with registered repos shows table output
-- [ ] Test `gityard status --dirty` filters to dirty repos only
-- [ ] Test `gityard status` with no registered repos shows informative message
+- [x] Test `gityard status` with registered repos shows table output
+- [x] Test `gityard status --dirty` filters to dirty repos only
+- [x] Test `gityard status` with no registered repos shows informative message
 
 ### Success Criteria:
 
 #### Automated Verification:
 
-- [ ] `cargo fmt --check` passes
-- [ ] `cargo clippy --all-targets` passes
-- [ ] `cargo test` passes — filter and presenter unit tests green
-- [ ] `gityard status` produces compact table with correct status for all
+- [x] `cargo fmt --check` passes
+- [x] `cargo clippy --all-targets` passes
+- [x] `cargo test` passes — filter and presenter unit tests green
+- [x] `gityard status` produces compact table with correct status for all
       registered repos
-- [ ] `gityard status --dirty` shows only dirty repos
-- [ ] `gityard status` with no repos prints a helpful message, not an empty table
+- [x] `gityard status --dirty` shows only dirty repos
+- [x] `gityard status` with no repos prints a helpful message, not an empty table
 
 #### Manual Verification:
 
@@ -660,7 +660,7 @@ pre-flight, no repo is modified (unless `--allow-partial` overrides).
 
 **File**: `src/operation.rs`
 
-- [ ] Define `Operation` enum:
+- [x] Define `Operation` enum:
 
 ```rust
 pub enum Operation {
@@ -671,7 +671,7 @@ pub enum Operation {
 }
 ```
 
-- [ ] Define `PreflightResult` for each repo:
+- [x] Define `PreflightResult` for each repo:
 
 ```rust
 pub enum PreflightResult {
@@ -684,7 +684,7 @@ pub enum PreflightResult {
 }
 ```
 
-- [ ] Implement pre-flight rules per operation:
+- [x] Implement pre-flight rules per operation:
   - `Fetch`: always `Ready` (no local state changes)
   - `Pull`: `Blocked` if working tree is dirty
   - `Push`: `Blocked` if behind upstream (`behind_remote` is `Some(n)` where
@@ -694,13 +694,13 @@ pub enum PreflightResult {
   - `Checkout`: `Blocked` if working tree is dirty; `Skipped` if branch doesn't
     exist in the repo (with warning)
 
-- [ ] Implement `preflight(op: &Operation, state: &RepoState) -> PreflightResult`
+- [x] Implement `preflight(op: &Operation, state: &RepoState) -> PreflightResult`
 
 #### 2. Executor Module
 
 **File**: `src/executor.rs`
 
-- [ ] Define `ExecArgs` CLI struct:
+- [x] Define `ExecArgs` CLI struct:
 
 ```rust
 #[derive(Debug, Parser)]
@@ -714,9 +714,9 @@ pub struct ExecArgs {
 }
 ```
 
-- [ ] Define `CheckoutArgs` extending `ExecArgs` with `branch: String`
+- [x] Define `CheckoutArgs` extending `ExecArgs` with `branch: String`
 
-- [ ] Implement `execute(op: Operation, entries: &[RepoEntry], states: &[RepoState], allow_partial: bool) -> Result<ExecutionReport>`:
+- [x] Implement `execute(op: Operation, entries: &[RepoEntry], states: &[RepoState], allow_partial: bool) -> Result<ExecutionReport>`:
   1. **Pre-flight phase**: run `preflight()` for each `(entry, state)` pair
   2. **Decision**: if any repo is `Blocked` and `!allow_partial`, abort with
      report showing which repos blocked and why
@@ -730,7 +730,7 @@ pub struct ExecArgs {
      - Capture stdout/stderr and exit code per repo
   5. **Report**: return structured `ExecutionReport` with per-repo results
 
-- [ ] Define `ExecutionReport`:
+- [x] Define `ExecutionReport`:
 
 ```rust
 pub struct ExecutionReport {
@@ -751,23 +751,23 @@ pub enum ExecOutcome {
 }
 ```
 
-- [ ] Implement `format_preflight_report()` for the pre-flight dry-run display
-- [ ] Implement `format_execution_report()` for the post-execution summary
+- [x] Implement `format_preflight_report()` for the pre-flight dry-run display
+- [x] Implement `format_execution_report()` for the post-execution summary
 
 #### 3. CLI Subcommands
 
 **File**: `src/cli.rs`
 
-- [ ] Add `Fetch(ExecArgs)`, `Pull(ExecArgs)`, `Push(PushArgs)`,
+- [x] Add `Fetch(ExecArgs)`, `Pull(ExecArgs)`, `Push(PushArgs)`,
       `Checkout(CheckoutArgs)` variants to `Command`
-- [ ] `PushArgs` extends `ExecArgs` with `#[arg(long)] force: bool`
-- [ ] `CheckoutArgs` extends `ExecArgs` with `branch: String` positional arg
+- [x] `PushArgs` extends `ExecArgs` with `#[arg(long)] force: bool`
+- [x] `CheckoutArgs` extends `ExecArgs` with `branch: String` positional arg
 
 #### 4. Wire Commands
 
 **File**: `src/main.rs`
 
-- [ ] Add handlers for `Fetch`, `Pull`, `Push`, `Checkout`:
+- [x] Add handlers for `Fetch`, `Pull`, `Push`, `Checkout`:
   1. Load registry (if `--group` is passed before Phase 5, return an error:
      "group filtering requires the `group` subcommand — see Phase 5")
   2. Inspect all targeted repos
@@ -776,46 +776,46 @@ pub enum ExecOutcome {
 
 **File**: `src/lib.rs`
 
-- [ ] Add `pub mod operation;` and `pub mod executor;`
+- [x] Add `pub mod operation;` and `pub mod executor;`
 
 #### Tests for This Phase
 
 **File**: `src/operation.rs` (unit tests)
 
-- [ ] Test `Fetch` pre-flight is always `Ready`
-- [ ] Test `Pull` pre-flight: `Blocked` when dirty, `Ready` when clean
-- [ ] Test `Push` pre-flight: `Blocked` when behind upstream, `Ready` when only ahead
-- [ ] Test `Push` pre-flight: `Blocked` when diverged (both ahead and behind)
-- [ ] Test `Push` with `force`: `Ready` even when behind upstream
-- [ ] Test `Checkout` pre-flight: `Blocked` when dirty, `Skipped` when branch
+- [x] Test `Fetch` pre-flight is always `Ready`
+- [x] Test `Pull` pre-flight: `Blocked` when dirty, `Ready` when clean
+- [x] Test `Push` pre-flight: `Blocked` when behind upstream, `Ready` when only ahead
+- [x] Test `Push` pre-flight: `Blocked` when diverged (both ahead and behind)
+- [x] Test `Push` with `force`: `Ready` even when behind upstream
+- [x] Test `Checkout` pre-flight: `Blocked` when dirty, `Skipped` when branch
       missing, `Ready` when clean and branch exists
 
 **File**: `src/executor.rs` (unit tests)
 
-- [ ] Test all-or-nothing: if any repo blocked, no execution happens
-- [ ] Test `--allow-partial`: blocked repos skipped, ready repos executed
-- [ ] Test execution report format
+- [x] Test all-or-nothing: if any repo blocked, no execution happens
+- [x] Test `--allow-partial`: blocked repos skipped, ready repos executed
+- [x] Test execution report format
 
 **File**: `tests/cli.rs` (integration tests — extend)
 
-- [ ] Test `gityard fetch` succeeds on clean repos (create temp repos with a
+- [x] Test `gityard fetch` succeeds on clean repos (create temp repos with a
       local remote)
-- [ ] Test `gityard pull` blocked when dirty repo exists (exit code != 0, stderr
+- [x] Test `gityard pull` blocked when dirty repo exists (exit code != 0, stderr
       shows which repo blocked)
-- [ ] Test `gityard pull --allow-partial` skips dirty repos and pulls clean ones
-- [ ] Test `gityard checkout main` switches branches on clean repos
+- [x] Test `gityard pull --allow-partial` skips dirty repos and pulls clean ones
+- [x] Test `gityard checkout main` switches branches on clean repos
 
 ### Success Criteria:
 
 #### Automated Verification:
 
-- [ ] `cargo fmt --check` passes
-- [ ] `cargo clippy --all-targets` passes
-- [ ] `cargo test` passes — operation and executor tests green
-- [ ] `gityard fetch` fetches all repos
-- [ ] `gityard pull` is blocked when any repo is dirty (all-or-nothing)
-- [ ] `gityard pull --allow-partial` skips dirty repos and pulls clean ones
-- [ ] Pre-flight report clearly shows which repos are blocked and why
+- [x] `cargo fmt --check` passes
+- [x] `cargo clippy --all-targets` passes
+- [x] `cargo test` passes — operation and executor tests green
+- [x] `gityard fetch` fetches all repos
+- [x] `gityard pull` is blocked when any repo is dirty (all-or-nothing)
+- [x] `gityard pull --allow-partial` skips dirty repos and pulls clean ones
+- [x] Pre-flight report clearly shows which repos are blocked and why
 
 ---
 
@@ -832,8 +832,8 @@ cross-repo branch overview. This completes the v0.1.0 feature set.
 
 **File**: `src/cli.rs`
 
-- [ ] Add `Group(GroupCommand)` variant to `Command`
-- [ ] Define `GroupCommand` subcommand enum:
+- [x] Add `Group(GroupCommand)` variant to `Command`
+- [x] Define `GroupCommand` subcommand enum:
 
 ```rust
 #[derive(Debug, Subcommand)]
@@ -857,27 +857,27 @@ pub enum GroupCommand {
 
 **File**: `src/registry.rs`
 
-- [ ] Implement `Registry::add_to_group(group_name, repo_identifiers)` — adds
+- [x] Implement `Registry::add_to_group(group_name, repo_identifiers)` — adds
       group name to matching entries' `groups` field
-- [ ] Implement `Registry::remove_group(group_name)` — removes group name from
+- [x] Implement `Registry::remove_group(group_name)` — removes group name from
       all entries
-- [ ] Implement `Registry::list_groups() -> BTreeMap<String, Vec<&RepoEntry>>` —
+- [x] Implement `Registry::list_groups() -> BTreeMap<String, Vec<&RepoEntry>>` —
       returns repos organized by group
-- [ ] Implement `Registry::entries_for_group(name) -> Vec<&RepoEntry>` — returns
+- [x] Implement `Registry::entries_for_group(name) -> Vec<&RepoEntry>` — returns
       entries matching a group name
 
 **File**: `src/main.rs`
 
-- [ ] Add `Group` command handlers (add, list, remove)
-- [ ] Update `Status`, `Fetch`, `Pull`, `Push`, `Checkout` handlers to filter
+- [x] Add `Group` command handlers (add, list, remove)
+- [x] Update `Status`, `Fetch`, `Pull`, `Push`, `Checkout` handlers to filter
       by `--group` when present (using `Registry::entries_for_group`)
 
 #### 2. Branches Command
 
 **File**: `src/cli.rs`
 
-- [ ] Add `Branches(BranchesArgs)` variant to `Command`
-- [ ] Define `BranchesArgs`:
+- [x] Add `Branches(BranchesArgs)` variant to `Command`
+- [x] Define `BranchesArgs`:
 
 ```rust
 #[derive(Debug, Parser)]
@@ -890,7 +890,7 @@ pub struct BranchesArgs {
 
 **File**: `src/branches.rs`
 
-- [ ] Define `BranchInfo` struct:
+- [x] Define `BranchInfo` struct:
 
 ```rust
 pub struct BranchInfo {
@@ -909,18 +909,18 @@ pub struct BranchInfo {
 }
 ```
 
-- [ ] Implement `list_branches(entry: &RepoEntry, main_branches: &[String]) -> Result<Vec<BranchInfo>>`:
+- [x] Implement `list_branches(entry: &RepoEntry, main_branches: &[String]) -> Result<Vec<BranchInfo>>`:
   1. Open repo with `git2::Repository::open`
   2. Iterate local branches with `repo.branches(Some(BranchType::Local))`
   3. For each branch: compute ahead/behind main, check if merged, get last
      commit date, check upstream tracking
-- [ ] Implement `list_branches_all(entries, config) -> Vec<(RepoEntry, Vec<BranchInfo>)>`
+- [x] Implement `list_branches_all(entries, config) -> Vec<(RepoEntry, Vec<BranchInfo>)>`
       using `rayon::par_iter()` (same pattern as `inspect_all` — git2 read
       operations are CPU-bound, so rayon is the right fit here)
 
 **File**: `src/presenter.rs`
 
-- [ ] Add `format_branches_table(data: &[(String, Vec<BranchInfo>)]) -> String`:
+- [x] Add `format_branches_table(data: &[(String, Vec<BranchInfo>)]) -> String`:
   - Group by repo
   - Show branch name, ahead/behind main, last commit date, merged status
   - Highlight current branch (HEAD)
@@ -939,48 +939,48 @@ pub struct BranchInfo {
 
 **File**: `src/lib.rs`
 
-- [ ] Add `pub mod branches;`
+- [x] Add `pub mod branches;`
 
 **File**: `src/main.rs`
 
-- [ ] Add `Branches` command handler: load registry, filter by group, list
+- [x] Add `Branches` command handler: load registry, filter by group, list
       branches across repos, format and print
 
 #### Tests for This Phase
 
 **File**: `src/registry.rs` (unit tests — extend)
 
-- [ ] Test `add_to_group` adds group to matching entries
-- [ ] Test `remove_group` removes group from all entries
-- [ ] Test `list_groups` returns correct grouping
-- [ ] Test `entries_for_group` filters correctly
+- [x] Test `add_to_group` adds group to matching entries
+- [x] Test `remove_group` removes group from all entries
+- [x] Test `list_groups` returns correct grouping
+- [x] Test `entries_for_group` filters correctly
 
 **File**: `src/branches.rs` (unit tests)
 
-- [ ] Test branch listing on a repo with multiple branches
-- [ ] Test ahead/behind main computation per branch
-- [ ] Test merged detection
-- [ ] Test `last_commit_epoch` is populated and presenter formats it as YYYY-MM-DD
+- [x] Test branch listing on a repo with multiple branches
+- [x] Test ahead/behind main computation per branch
+- [x] Test merged detection
+- [x] Test `last_commit_epoch` is populated and presenter formats it as YYYY-MM-DD
 
 **File**: `tests/cli.rs` (integration tests — extend)
 
-- [ ] Test `gityard group add rust agentspec gityard` creates group
-- [ ] Test `gityard group list` shows groups
-- [ ] Test `gityard status --group rust` filters to group members
-- [ ] Test `gityard branches` shows branch overview
+- [x] Test `gityard group add rust agentspec gityard` creates group
+- [x] Test `gityard group list` shows groups
+- [x] Test `gityard status --group rust` filters to group members
+- [x] Test `gityard branches` shows branch overview
 
 ### Success Criteria:
 
 #### Automated Verification:
 
-- [ ] `cargo fmt --check` passes
-- [ ] `cargo clippy --all-targets` passes
-- [ ] `cargo test` passes — group and branches tests green
-- [ ] `gityard group add <name> <repos>` creates a group
-- [ ] `gityard group list` displays all groups and their members
-- [ ] `gityard status --group <name>` shows only repos in that group
-- [ ] `gityard fetch --group <name>` targets only group members
-- [ ] `gityard branches` shows cross-repo branch overview with correct
+- [x] `cargo fmt --check` passes
+- [x] `cargo clippy --all-targets` passes
+- [x] `cargo test` passes — group and branches tests green
+- [x] `gityard group add <name> <repos>` creates a group
+- [x] `gityard group list` displays all groups and their members
+- [x] `gityard status --group <name>` shows only repos in that group
+- [x] `gityard fetch --group <name>` targets only group members
+- [x] `gityard branches` shows cross-repo branch overview with correct
       ahead/behind and merge status
 
 ---
