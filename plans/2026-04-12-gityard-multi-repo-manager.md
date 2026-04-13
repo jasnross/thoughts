@@ -639,7 +639,7 @@ pub struct StatusArgs {
 
 #### Manual Verification:
 
-- [ ] Visual inspection of `gityard status` output against real repositories
+- [x] Visual inspection of `gityard status` output against real repositories
       confirms readability — colors render correctly, columns align, summary
       footer is accurate (manual-only: subjective visual quality)
 
@@ -989,11 +989,11 @@ pub struct BranchInfo {
 
 ### Cross-Phase Testing:
 
-- [ ] End-to-end workflow test: `scan` → `status` → `fetch` → `pull` → `status`
+- [x] End-to-end workflow test: `scan` → `status` → `fetch` → `pull` → `status`
       verifying state changes are reflected
-- [ ] Test with 20+ repos to verify output remains scannable and performance is
+- [x] Test with 20+ repos to verify output remains scannable and performance is
       acceptable (rayon parallelism)
-- [ ] Test with repos in various states: clean, dirty, ahead, behind, diverged,
+- [x] Test with repos in various states: clean, dirty, ahead, behind, diverged,
       detached HEAD, missing remote
 
 ### Manual Testing Steps:
