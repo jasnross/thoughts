@@ -86,13 +86,13 @@ prefix = "tw"
 
 # Claude Code plugin: no file prefix, colon-separated content prefix
 [sync.claude]
-content_prefix = "tw:"
+content-prefix = "tw:"
 # -> file: {id}, content: tw:{id}
 
 # Both: file prefix AND different content prefix
 [sync.claude]
 prefix = "tw"
-content_prefix = "tw:"
+content-prefix = "tw:"
 # -> file: tw-{id}, content: tw:{id}
 
 # No prefix at all (also unchanged)
@@ -158,7 +158,7 @@ pub fn model_facing_name(spec: &NormalizedSpec, cfg: Option<&AdapterConfig>) -> 
 
 - **Backwards compatibility**: Existing configs with `prefix = "tw"` must continue to produce `tw-{id}` for both files and content. The `content_prefix` default-to-`prefix` behavior ensures this.
 - **Template context reuse**: The `{{ specs.skill.foo.name }}` system already works. The solution only changes what `.name` resolves to — it doesn't require new template syntax or a new resolution stage.
-- **Per-provider independence**: Each provider's prefix config is already independent. The solution maintains this — Claude can use `content_prefix = "tw:"` while Cursor uses the standard `prefix = "tw"`.
+- **Per-provider independence**: Each provider's prefix config is already independent. The solution maintains this — Claude can use `content-prefix = "tw:"` while Cursor uses the standard `prefix = "tw"`.
 
 ## Resolved Questions
 
